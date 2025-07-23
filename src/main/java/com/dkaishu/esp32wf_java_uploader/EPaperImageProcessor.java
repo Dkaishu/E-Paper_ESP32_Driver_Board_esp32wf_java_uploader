@@ -42,6 +42,7 @@ public class EPaperImageProcessor {
 
     private int[][] currentPalette;
     private int epdIndex;
+
     public EPaperImageProcessor(int epdIndex) {
         this.epdIndex = epdIndex;
         // 初始化当前调色板 (7.5b V2使用索引23，对应paletteIndex=1)
@@ -124,17 +125,17 @@ public class EPaperImageProcessor {
 
                     // 扩散误差（使用与JavaScript相同的权重）
                     if (x == 0) {
-                        addError(error, bInd, x + 1, errR, errG, errB, 7.0/32);
-                        addError(error, bInd, x + 2, errR, errG, errB, 2.0/32);
-                        addError(error, aInd, x + 2, errR, errG, errB, 7.0/32);
+                        addError(error, bInd, x + 1, errR, errG, errB, 7.0 / 32);
+                        addError(error, bInd, x + 2, errR, errG, errB, 2.0 / 32);
+                        addError(error, aInd, x + 2, errR, errG, errB, 7.0 / 32);
                     } else if (x == width - 1) {
-                        addError(error, bInd, x, errR, errG, errB, 7.0/32);
-                        addError(error, bInd, x + 1, errR, errG, errB, 9.0/32);
+                        addError(error, bInd, x, errR, errG, errB, 7.0 / 32);
+                        addError(error, bInd, x + 1, errR, errG, errB, 9.0 / 32);
                     } else {
-                        addError(error, bInd, x, errR, errG, errB, 3.0/32);
-                        addError(error, bInd, x + 1, errR, errG, errB, 5.0/32);
-                        addError(error, bInd, x + 2, errR, errG, errB, 1.0/32);
-                        addError(error, aInd, x + 2, errR, errG, errB, 7.0/32);
+                        addError(error, bInd, x, errR, errG, errB, 3.0 / 32);
+                        addError(error, bInd, x + 1, errR, errG, errB, 5.0 / 32);
+                        addError(error, bInd, x + 2, errR, errG, errB, 1.0 / 32);
+                        addError(error, aInd, x + 2, errR, errG, errB, 7.0 / 32);
                     }
                 }
             }
@@ -144,9 +145,9 @@ public class EPaperImageProcessor {
 
     private void addError(int[][][] error, int bufIndex, int x, int errR, int errG, int errB, double factor) {
         if (x >= 0 && x < error[0].length) {
-            error[bufIndex][x][0] += (int)(errR * factor);
-            error[bufIndex][x][1] += (int)(errG * factor);
-            error[bufIndex][x][2] += (int)(errB * factor);
+            error[bufIndex][x][0] += (int) (errR * factor);
+            error[bufIndex][x][1] += (int) (errG * factor);
+            error[bufIndex][x][2] += (int) (errB * factor);
         }
     }
 
@@ -211,15 +212,17 @@ public class EPaperImageProcessor {
     }
 
 
-
     public static void main(String[] args) {
         // 初始化当前调色板 (7.5b V2使用索引19，对应paletteIndex=1)
         int epdIndex = 23;
         EPaperImageProcessor processor = new EPaperImageProcessor(epdIndex);
 
         try {
+//            String imagePath = "test-1.jpg";
+//            String imagePath = "test-2.jpg";
+            String imagePath = "test-3.jpg";
             // 加载示例图片
-            BufferedImage originalImage = ImageIO.read(new File("360px-7.5inch-e-Paper-B-1.jpg"));
+            BufferedImage originalImage = ImageIO.read(new File(imagePath));
 
             // 设置裁切区域 (x, y, width, height)
             int targetWidth = EPD_ARRAY[epdIndex][0];
@@ -229,11 +232,11 @@ public class EPaperImageProcessor {
             // 处理图像
             BufferedImage cropped = processor.cropImage(originalImage, cropArea);
             // (isLevel: true=阈值, false=抖动; isColor: 是否使用彩色)
-            BufferedImage processed = processor.processImage(cropped, false, true);
+            BufferedImage processed = processor.processImage(originalImage, false, true);
 
-            // 提取红色和黑色通道
-            BufferedImage redChannel = processor.extractColorChannel(processed, new int[]{127, 0, 0});
-            BufferedImage blackChannel = processor.extractColorChannel(processed, new int[]{0, 0, 0});
+            // 提取纯红色和纯黑色通道
+            BufferedImage redChannel = processor.extractColorChannel(originalImage, new int[]{127, 0, 0});
+            BufferedImage blackChannel = processor.extractColorChannel(originalImage, new int[]{0, 0, 0});
 
             // 保存结果
             ImageIO.write(cropped, "png", new File("cropped.png"));
@@ -242,8 +245,6 @@ public class EPaperImageProcessor {
             ImageIO.write(blackChannel, "png", new File("black_channel.png"));
 
             System.out.println("处理完成，输出图像已保存");
-
-
 
         } catch (IOException e) {
             e.printStackTrace();

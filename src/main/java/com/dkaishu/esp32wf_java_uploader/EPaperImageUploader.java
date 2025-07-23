@@ -10,7 +10,7 @@ import java.net.URL;
 import java.util.Arrays;
 
 public class EPaperImageUploader {
-    private static final String SERVER_URL = "http://192.168.0.111/";
+    private static final String SERVER_URL = "http://192.168.3.111/";
     private static final int[][][] palArr = {
             {{0, 0, 0}, {255, 255, 255}},
             {{0, 0, 0}, {255, 255, 255}, {127, 0, 0}},
@@ -42,9 +42,15 @@ public class EPaperImageUploader {
     };
 
 
+    /**
+     * 示例代码 入口
+     */
     public static void main(String[] args) throws Exception {
 
-        String imagePath = "测试1.jpg";
+//        String imagePath = "test-1.jpg";
+//        String imagePath = "test-2.jpg";
+        String imagePath = "test-3.jpg";
+
         //设备型号index
         int epdIndex = 23;
 
@@ -53,6 +59,7 @@ public class EPaperImageUploader {
         int[] pixels = processImage(image, epdIndex, 3);
         uploadImage(pixels, epdIndex);
     }
+
 
     /**
      * 上传图像（缩放）
