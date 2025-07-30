@@ -47,16 +47,20 @@ public class EPaperImageUploader {
      */
     public static void main(String[] args) throws Exception {
 
-//        String imagePath = "test-1.jpg";
-//        String imagePath = "test-2.jpg";
         String imagePath = "test-3.jpg";
 
         //设备型号index
         int epdIndex = 23;
-
         BufferedImage image = ImageIO.read(new File(imagePath));
-        //0: 单色电平处理 1: 彩色电平处理 2: 单色抖动处理 3: 彩色抖动处理
-        int[] pixels = processImage(image, epdIndex, 3);
+        //processType 0: 单色电平处理 1: 彩色电平处理 2: 单色抖动处理 3: 彩色抖动处理
+        EPaperImageUploader.processAndUploadImage(image, epdIndex, 3);
+    }
+
+    /**
+     * 处理图像并上传
+     */
+    public static void processAndUploadImage(BufferedImage image, int epdIndex, int processType) throws Exception {
+        int[] pixels = processImage(image, epdIndex, processType);
         uploadImage(pixels, epdIndex);
     }
 
@@ -68,7 +72,7 @@ public class EPaperImageUploader {
      * 2: 单色抖动处理
      * 3: 彩色抖动处理
      */
-    private static int[] processImage(BufferedImage image, int epdIndex, int processType) {
+    public static int[] processImage(BufferedImage image, int epdIndex, int processType) {
         int width = epdArr[epdIndex][0];
         int height = epdArr[epdIndex][1];
         int palInd = epdArr[epdIndex][2];
@@ -355,7 +359,7 @@ public class EPaperImageUploader {
         return dr * dr + dg * dg + db * db;
     }
 
-    private static void uploadImage(int[] pixels, int epdIndex) throws Exception {
+    public static void uploadImage(int[] pixels, int epdIndex) throws Exception {
         System.out.println("Uploading image...");
 
         if ((epdIndex == 3) || (epdIndex == 39) || (epdIndex == 43)) { // 2.13
